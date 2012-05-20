@@ -12,23 +12,20 @@
 (function( $ ){
 	
   $.fn.fitText = function( kompressor, options ) {
-	    
-    var settings = {
-      'minFontSize' : Number.NEGATIVE_INFINITY,
-      'maxFontSize' : Number.POSITIVE_INFINITY
-    };
-	
-    return this.each(function(){
-      var $this = $(this);              // store the object
-		  var compressor = kompressor || 1; // set the compressor
+  
+    return this.each(function(i, el){
+      var $this = $(this);                     // store the object
+      var compressor = (kompressor || 1) * 10; // set the compressor
         
-      if ( options ) { 
-        $.extend( settings, options );
-      }
+      options = $.extend( {}, $.fn.fitText.defaults, options );
+
+      // Parse options once for use in the resizer
+      options.maxFontSize = parseFloat(options.maxFontSize);
+      options.minFontSize = parseFloat(options.minFontSize);
         
       // Resizer() resizes items based on the object width divided by the compressor * 10
       var resizer = function () {
-        $this.css('font-size', Math.max(Math.min($this.width() / (compressor*10), parseFloat(settings.maxFontSize)), parseFloat(settings.minFontSize)));
+        el.style.fontSize = Math.max(Math.min($this.width() / compressor, options.maxFontSize), options.minFontSize ) + "px";
       };
 
       // Call once to set.
@@ -39,6 +36,11 @@
       	
     });
 
+  };
+
+  $.fn.fitText.defaults = {
+    minFontSize : Number.NEGATIVE_INFINITY,
+    maxFontSize : Number.POSITIVE_INFINITY
   };
 
 })( jQuery );
